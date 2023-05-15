@@ -9,6 +9,7 @@ class SpaceRocks:
         # Initilialize pygame and set the title
         pygame.init()
         pygame.display.set_caption("Space Rocks")
+        self.clock = pygame.time.Clock()
 
         self.screen = pygame.display.set_mode((800, 600))
         self.background = load_sprite("space", False)
@@ -17,7 +18,7 @@ class SpaceRocks:
         self.ship = GameObject((400, 300), sprite, (0, 0))
 
         sprite = load_sprite("asteroid")
-        self.rock = GameObject((400, 300), sprite, (1, 0))
+        self.rock = GameObject((0, 300), sprite, (1, 0))
 
         self.collision_count = 0
 
@@ -46,3 +47,5 @@ class SpaceRocks:
         if self.ship.collides_with(self.rock):
             self.collision_count += 1
             print(f"Collision #{self.collision_count}")
+
+        self.clock.tick(30)
