@@ -37,9 +37,10 @@ class Spaceship(GameObject):
     ACCELERATION = 0.25
     BULLET_SPEED = 3
 
-    def __init__(self, position, bullet_container):
+    def __init__(self, position, bullet_container, alive=True):
         self.direction = Vector2(DIRECTION_UP)
         self.bullet_container = bullet_container
+        self.alive = alive
         super().__init__(position, load_sprite("spaceship"), Vector2(0))
 
     def rotate(self, clockwise=True):
@@ -56,12 +57,13 @@ class Spaceship(GameObject):
         self.bullet_container.append(bullet)
 
     def draw(self, surface):
-        angle = self.direction.angle_to(DIRECTION_UP)
-        rotated_surface = rotozoom(self.sprite, angle, 1.0)
-        rotated_surface_size = Vector2(rotated_surface.get_size())
+        if self.alive:
+            angle = self.direction.angle_to(DIRECTION_UP)
+            rotated_surface = rotozoom(self.sprite, angle, 1.0)
+            rotated_surface_size = Vector2(rotated_surface.get_size())
 
-        blit_position = self.position - rotated_surface_size * 0.5
-        surface.blit(rotated_surface, blit_position)
+            blit_position = self.position - rotated_surface_size * 0.5
+            surface.blit(rotated_surface, blit_position)
 
 
 class Rock(GameObject):
