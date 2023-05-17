@@ -16,7 +16,9 @@ class SpaceRocks:
         self.screen = pygame.display.set_mode((800, 600))
         self.background = load_sprite("space", False)
 
-        self.ship = Spaceship((400, 300))
+        self.bullets = []
+
+        self.ship = Spaceship((400, 300), self.bullets)
 
         self.rocks = [
             Rock(self.screen, self.ship.position) for _ in range(self.NUM_ROCKS)
@@ -33,6 +35,9 @@ class SpaceRocks:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.ship.shoot()
 
         is_key_pressed = pygame.key.get_pressed()
         if is_key_pressed[pygame.K_ESCAPE] or is_key_pressed[pygame.K_q]:
@@ -47,11 +52,16 @@ class SpaceRocks:
 
     @property
     def game_objects(self):
-        return [*self.rocks, self.ship]
+        return [*self.rocks, *self.bullets, self.ship]
 
     def _game_logic(self):
         for obj in self.game_objects:
             obj.move(self.screen)
+
+        rect = self.screen.get_rect()
+        for bullet in self.bullets[:]:
+            if not rect.collidepoint(bullet.position):
+                self.bullets.remove(bullet)
 
     def _draw(self):
         self.screen.blit(self.background, (0, 0))
@@ -60,5 +70,4 @@ class SpaceRocks:
             obj.draw(self.screen)
 
         pygame.display.flip()
-
         self.clock.tick(30)
