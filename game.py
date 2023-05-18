@@ -21,7 +21,8 @@ class SpaceRocks:
         self.ship = Spaceship((400, 300), self.bullets)
 
         self.rocks = [
-            Rock(self.screen, self.ship.position) for _ in range(self.NUM_ROCKS)
+            Rock.create_random(self.screen, self.ship.position)
+            for _ in range(self.NUM_ROCKS)
         ]
 
     def main_loop(self):
@@ -54,7 +55,11 @@ class SpaceRocks:
 
     @property
     def game_objects(self):
-        return [*self.rocks, *self.bullets, self.ship]
+        return (
+            [*self.rocks, *self.bullets, self.ship]
+            if self.ship.alive
+            else [*self.rocks, *self.bullets]
+        )
 
     def _game_logic(self):
         for obj in self.game_objects:
@@ -68,6 +73,7 @@ class SpaceRocks:
         for bullet in self.bullets[:]:
             for rock in self.rocks[:]:
                 if rock.collides_with(bullet):
+                    self.rocks += rock.split()
                     self.rocks.remove(rock)
                     self.bullets.remove(bullet)
                     break
