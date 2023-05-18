@@ -1,4 +1,5 @@
 # space_rocks/utils.py
+from pygame import Color
 from pygame.image import load
 from pygame.math import Vector2
 from pygame.mixer import Sound
@@ -24,3 +25,10 @@ def wrap_position(position, surface):
 def load_sound(name):
     filename = Path(__file__).parent / Path(f"assets/sounds/{name}.wav")
     return Sound(filename.resolve())
+
+
+def print_text(surface, text, font, color=Color("tomato")):
+    text_surface = font.render(text, True, color)
+    rect = text_surface.get_rect()
+    rect.center = Vector2(surface.get_size()) / 2
+    surface.blit(text_surface, rect)

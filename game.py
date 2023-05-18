@@ -1,7 +1,7 @@
 # space_rocks/game.py
 import pygame
 from models import Rock, Spaceship
-from utils import load_sprite
+from utils import load_sprite, print_text
 
 
 class SpaceRocks:
@@ -12,6 +12,8 @@ class SpaceRocks:
         pygame.init()
         pygame.display.set_caption("Space Rocks")
         self.clock = pygame.time.Clock()
+        self.font = pygame.font.Font(None, 64)
+        self.message = ""
 
         self.screen = pygame.display.set_mode((800, 600))
         self.background = load_sprite("space", False)
@@ -79,17 +81,24 @@ class SpaceRocks:
                     break
 
         if self.ship.alive:
-            for rock in self.rocks[:]:
-                if rock.collides_with(self.ship):
-                    self.rocks.remove(rock)
-                    self.ship.alive = False
-                    break
+            if not self.rocks:
+                self.message = "WINNER!"
+            else:
+                for rock in self.rocks[:]:
+                    if rock.collides_with(self.ship):
+                        self.rocks.remove(rock)
+                        self.ship.alive = False
+                        self.message = "You lost!"
+                        break
 
     def _draw(self):
         self.screen.blit(self.background, (0, 0))
 
         for obj in self.game_objects:
             obj.draw(self.screen)
+
+        if self.message:
+            print_text(self.screen, self.message, self.font)
 
         pygame.display.flip()
         self.clock.tick(30)
