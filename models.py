@@ -71,21 +71,44 @@ class Rock(GameObject):
     MIN_SPEED = 1
     MAX_SPEED = 3
 
-    def __init__(self, surface, ship_position):
-        # Generate a random position until one is far enough away from the ship
+    @classmethod
+    def create_random(cls, surface, ship_position):
         position = ship_position
-        while position.distance_to(ship_position) < self.MIN_START_GAP:
+        # Generate a random position until one is far enough away from the ship
+        while position.distance_to(ship_position) < cls.MIN_START_GAP:
             position = Vector2(
                 random.randrange(surface.get_width()),
                 random.randrange(surface.get_height()),
             )
+
+        return Rock(position)
+
+    def __init__(self, position, size=3):
+        # Load the appropriate sprite and scale it
+        self.size = size
+        if self.size == 3:
+            scale = 1.0
+        elif self.size == 2:
+            scale = 0.5
+        else:
+            scale = 0.25
+
+        sprite = rotozoom(load_sprite("asteroid"), 0, scale)
 
         # Generate a random velocity
         speed = random.randint(self.MIN_SPEED, self.MAX_SPEED)
         angle = random.randint(0, 360)
         velocity = Vector2(speed, 0).rotate(angle)
 
-        super().__init__(position, load_sprite("asteroid"), velocity)
+        super().__init__(position, sprite, velocity)
+
+    def split(self):
+        if self.size > 1:
+            return [
+                Rock(self.position, self.size - 1),
+                Rock(self.position, self.size - 1),
+            ]
+        return []
 
 
 class Bullet(GameObject):
